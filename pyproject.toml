@@ -1,0 +1,186 @@
+[build-system]
+requires = ["setuptools>=61", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+license-files = ["LICEN[CS]E*"]
+
+[tool.setuptools.exclude-package-data]
+
+[tool.setuptools.package-data]
+img2bag = ["py.typed"]
+
+[tool.setuptools_scm]
+version_file = "img2bag/_version.py"
+
+[project]
+name = "img2bag"
+description = "Command-line utility for converting images to ROS2 bag files"
+readme = "README.md"
+authors = [
+    { name = "Alexander Hilgart", email = "alexander.hilgart@b-plus.com" },
+]
+license = { text = "MIT" }
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Software Development",
+    "Typing :: Typed",
+]
+requires-python = ">=3.8"
+dependencies = ["jsonargparse[ruyaml]", "numpy", "pillow", "rich"]
+dynamic = ["version"]
+keywords = [
+    "camera",
+    "conversion",
+    "converter",
+    "image",
+    "mcap",
+    "message",
+    "msg",
+    "reader",
+    "ros",
+    "ros2",
+    "rosbag",
+    "rosbag2",
+    "writer",
+]
+
+[project.optional-dependencies]
+
+[project.scripts]
+img2bag = "img2bag.__main__:main"
+
+[project.urls]
+Homepage = "https://github.com/bplus-group/img2bag"
+Documentation = "https://github.com/bplus-group/img2bag"
+Source = "https://github.com/bplus-group/img2bag"
+Issues = "https://github.com/bplus-group/img2bag/issues"
+Changelog = "https://github.com/bplus-group/img2bag/releases"
+
+[dependency-groups]
+dev = ["mypy", "pre-commit", "ruff"]
+
+[tool.mypy]
+
+# Ensure full coverage
+disallow_untyped_calls = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+disallow_untyped_decorators = true
+check_untyped_defs = true
+strict_equality = true
+
+#strict_equality Restrict dynamic typing
+disallow_any_generics = true
+disallow_subclassing_any = true
+warn_return_any = true
+
+# Know exactly what you're doing
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_unused_configs = true
+warn_unreachable = true
+show_error_codes = true
+show_column_numbers = true
+
+# Explicit is better than implicit
+no_implicit_optional = true
+no_implicit_reexport = true
+
+# Ignore all untyped third-party packages.
+ignore_missing_imports = true
+follow_imports = 'silent'
+
+[tool.ruff]
+line-length = 120
+indent-width = 4
+
+[tool.ruff.lint]
+select = ['ALL']
+ignore = [
+    'ANN',    # flake8-annotations
+    'D',      # pydocstyle
+    'INP001', # flake8-no-pep420: implicit-namespace-package
+    'TRY',    # tryceratops
+]
+
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ['ALL']
+unfixable = []
+
+# If lint.pycodestyle.ignore-overlong-task-comments is true,
+# this rule will also ignore comments that start with any of the specified lint.task-tags
+task-tags = ['+ ', '! ', '? ', '* ']
+
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.lint.per-file-ignores]
+'__init__.py' = ['D104']
+'__main__.py' = ['D103', 'D104']
+
+[tool.ruff.lint.flake8-quotes]
+docstring-quotes = 'double'
+inline-quotes = 'single'
+multiline-quotes = 'double'
+
+[tool.ruff.lint.isort]
+force-single-line = true
+
+[tool.ruff.lint.pycodestyle]
+ignore-overlong-task-comments = true
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.ruff.format]
+# Unlike Black, use double quotes for strings.
+quote-style = 'single'
+
+# Like Black, indent with spaces, rather than tabs.
+indent-style = 'space'
+
+# Like Black, respect magic trailing commas.
+skip-magic-trailing-comma = false
+
+# Like Black, automatically detect the appropriate line ending.
+line-ending = 'auto'
+
+# Enable auto-formatting of code examples in docstrings. Markdown,
+# reStructuredText code/literal blocks and doctests are all supported.
+docstring-code-format = true
+
+# Set the line length limit used when formatting code snippets in
+# docstrings.
+docstring-code-line-length = 'dynamic'
+
+[tool.numpydoc_validation]
+checks = [
+    "all",  # report on all checks
+    "ES01", # but don't require an extended summary
+    "EX01", # or examples
+    "SA01", # or a see also section
+    "SS06", # and don't require the summary to fit on one line
+]
+exclude = [ # don't report on checks for these
+    '\.undocumented_method$',
+    '\.__init__$',
+    '\.__repr__$',
+    '\.__str__$',
+    '__main__',               # exclude __main__.py
+]
+override_SS05 = [ # allow docstrings to start with these words
+    '^Process ',
+    '^Assess ',
+    '^Access ',
+]
