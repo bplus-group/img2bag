@@ -124,6 +124,7 @@ camera_info_topic: camera_info     # Topic for camera info messages (optional)
 image_size: null                   # Resize images (e.g., 1280 or 1920x1080, optional)
 timestamp: 1738648875              # Timestamp for images [Unix epoch time] (optional)
 rate: 1.0                          # Image publishing rate [Hz] (optional)
+recursive_dirs: false              # Recursively search directories for images (optional)
 output: null                       # output bag file name (required)
 format: MCAP                       # Storage format [SQLITE3, MCAP] (optional)
 ```
@@ -186,8 +187,10 @@ For more advanced options while converting:
                         ImageSizeType, default: null)
   -ts TIMESTAMP, --timestamp TIMESTAMP
                         Starting timestamp (Unix epoch time in seconds) for the bag file. Defaults to the current system
-                        time. (type: PositiveInt, default: 1738659157)
+                        time. (type: PositiveInt, default: 1738910486)
   -r RATE, --rate RATE  Playback rate of the image topics in frames per second (Hz). (type: PositiveFloat, default: 1.0)
+  -rd, --recursive-dirs
+                        Recursively search directories for images. (default: False)
   -o OUTPUT, --output OUTPUT
                         Path to save the output bag file. (required, type: Path_fc)
   -f {SQLITE3,MCAP}, --format {SQLITE3,MCAP}

@@ -118,6 +118,14 @@ def _parse_arguments() -> Namespace:
     )
 
     parser.add_argument(
+        '-rd',
+        '--recursive-dirs',
+        action='store_true',
+        default=False,
+        help='Recursively search directories for images.',
+    )
+
+    parser.add_argument(
         '-o',
         '--output',
         type=Path_fc,
@@ -165,11 +173,13 @@ def main() -> int:
         from .img2bag_converter import Img2BagConverter
 
         converter = Img2BagConverter(_parse_image_topic_pairs(args.directories, args.topics))
-        converter.storage_id = StorageID(args.format)
+
         converter.image_size = _parse_image_size(args.image_size)
         converter.start_timestamp = args.timestamp
         converter.rate = args.rate
         converter.camera_info_topic = args.camera_info_topic
+        converter.recursive_dirs = args.recursive_dirs
+        converter.storage_id = StorageID(args.format)
 
         converter.convert(args.output.absolute)
 

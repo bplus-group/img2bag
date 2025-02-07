@@ -69,27 +69,12 @@ class Img2BagConverter:
         self._image_topic_pairs = image_topic_pairs
         self._rosbag_writer: SequentialWriter
 
-        self._storage_id: StorageID = StorageID.MCAP
+        self._camera_info_topic: str = 'camera_info'
         self._imgsz: tuple[int, int] | None = None
         self._start_timestamp: float = time()
         self._rate: float = 1.0
-        self._camera_info_topic: str = 'camera_info'
-
-    @property
-    def storage_id(self) -> StorageID:
-        """
-        Get the storage backend used for the ROS bag file.
-
-        Returns
-        -------
-        StorageID
-            The selected storage backend (e.g., `StorageID.SQLITE3` or `StorageID.MCAP`).
-        """
-        return self._storage_id
-
-    @storage_id.setter
-    def storage_id(self, value: StorageID) -> None:  # numpydoc ignore=GL08
-        self._storage_id = value
+        self._recursive_dirs: bool = False
+        self._storage_id: StorageID = StorageID.MCAP
 
     @property
     def image_size(self) -> tuple[int, int] | None:
@@ -156,6 +141,38 @@ class Img2BagConverter:
     @camera_info_topic.setter
     def camera_info_topic(self, value: str) -> None:  # numpydoc ignore=GL08
         self._camera_info_topic = value
+
+    @property
+    def recursive_dirs(self) -> bool:
+        """
+        Get the flag indicating whether to recursively search for images in subdirectories.
+
+        Returns
+        -------
+        bool
+            `True` if subdirectories should be searched, `False` otherwise.
+        """
+        return self._recursive_dirs
+
+    @recursive_dirs.setter
+    def recursive_dirs(self, value: bool) -> None:  # numpydoc ignore=GL08
+        self._recursive_dirs = value
+
+    @property
+    def storage_id(self) -> StorageID:
+        """
+        Get the storage backend used for the ROS bag file.
+
+        Returns
+        -------
+        StorageID
+            The selected storage backend (e.g., `StorageID.SQLITE3` or `StorageID.MCAP`).
+        """
+        return self._storage_id
+
+    @storage_id.setter
+    def storage_id(self, value: StorageID) -> None:  # numpydoc ignore=GL08
+        self._storage_id = value
 
     def _register_topics(self, frame_id: str, img_topic: str) -> tuple[str, str]:
         """
@@ -245,7 +262,11 @@ class Img2BagConverter:
         image_topic_name, camera_info_topic_name = self._register_topics(frame_id, topic)
         sec, nsec = split_unix_timestamp(self._start_timestamp)
 
-        image_files = [f for f in Path(image_dir).iterdir() if f.is_file()]
+        image_files = [
+            f
+            for f in (Path(image_dir).rglob('**/*') if self._recursive_dirs else Path(image_dir).iterdir())
+            if f.is_file()
+        ]
         image_files.sort(key=natural_sort_key)
 
         for file_path in track(
@@ -253,17 +274,18 @@ class Img2BagConverter:
             description=f"Processing topic '{image_topic_name}'",
             total=len(image_files),
         ):
+            header = Header(stamp=Time(sec=sec, nanosec=nsec), frame_id=frame_id)
+            print(file_path)
             try:
-                header = Header(stamp=Time(sec=sec, nanosec=nsec), frame_id=frame_id)
                 img_msg, camera_info_msg = self._create_image_camera_info_messages(file_path, header)
-
-                timestamp = int(sec * 1e9 + nsec)
-                self._rosbag_writer.write(image_topic_name, serialize_message(img_msg), timestamp)
-                self._rosbag_writer.write(camera_info_topic_name, serialize_message(camera_info_msg), timestamp)
-
-                sec, nsec = split_unix_timestamp((sec + 1 / self._rate) + nsec * 1e-9)
-            except (OSError, SyntaxError):  # noqa: PERF203
+            except (OSError, SyntaxError):
                 continue
+
+            timestamp = int(sec * 1e9 + nsec)
+            self._rosbag_writer.write(image_topic_name, serialize_message(img_msg), timestamp)
+            self._rosbag_writer.write(camera_info_topic_name, serialize_message(camera_info_msg), timestamp)
+
+            sec, nsec = split_unix_timestamp((sec + 1 / self._rate) + nsec * 1e-9)
 
     def convert(self, output: Path | str) -> None:
         """
