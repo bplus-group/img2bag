@@ -75,6 +75,29 @@ python3 -m pip install git+https://github.com/bplus-group/img2bag
 img2bag --directories=[./images] --topics=[/image] --output mybag
 ```
 
+> [!NOTE]
+> Images within the directories are sorted using natural order respecting the file paths with OS-Generated names.
+>
+> e.g.:
+> ```bash
+> img2bag --directories=[./images] --topics=[/image] --recursive-dirs --output mybag
+> ```
+>
+> ```plaintext
+> ./images/1.png
+> ./images/2.png
+> ./images/3.png
+> ./images/subfolder/subfolder_2/001.png
+> ./images/subfolder/subfolder_2/2.png
+> ./images/subfolder/subfolder_2/03.png
+> ./images/subfolder/subfolder_3/1.png
+> ./images/subfolder/subfolder_3/image2.png
+> ./images/subfolder/subfolder_3/image 3.png
+> ./images/subfolder/subfolder (4)/1738915422.288516.png
+> ./images/subfolder/subfolder (4)/1738915434.2312446.png
+> ./images/subfolder/subfolder (4)/1738915444.8668082.png
+> ```
+
 ```plaintext
 Processing topic '/image' ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:17
 
@@ -171,8 +194,9 @@ For more advanced options while converting:
   --directories DIRECTORIES, --directories+ DIRECTORIES
                         List of directories containing images to be processed. The number of directories must match the
                         number of '--topics'. Usage: '--directories=[dir1,dir2]' or '--directories+=dir3' to append
-                        another directory. Quoting is required when specifying multiple directories that are separated
-                        by commas and spaces. (required, type: List[Path_dr])
+                        another directory. Images within the directories are sorted using natural order respecting the
+                        file paths with OS-Generated names. Quoting is required when specifying multiple directories
+                        that are separated by commas and spaces. (required, type: List[Path_dr])
   --topics TOPICS, --topics+ TOPICS
                         List of topics to publish images under. Each topic corresponds to a directory specified in '--
                         directories'. Usage: '--topics=[topic1,topic2]' or '--topics+=topic3' to append another topic.
@@ -187,7 +211,7 @@ For more advanced options while converting:
                         ImageSizeType, default: null)
   -ts TIMESTAMP, --timestamp TIMESTAMP
                         Starting timestamp (Unix epoch time in seconds) for the bag file. Defaults to the current system
-                        time. (type: PositiveInt, default: 1738910486)
+                        time. (type: PositiveInt, default: 1738914937)
   -r RATE, --rate RATE  Playback rate of the image topics in frames per second (Hz). (type: PositiveFloat, default: 1.0)
   -rd, --recursive-dirs
                         Recursively search directories for images. (default: False)

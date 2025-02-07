@@ -66,7 +66,8 @@ def _parse_arguments() -> Namespace:
         help=(
             'List of directories containing images to be processed. The number of directories must match the number of '
             "'--topics'. Usage: '--directories=[dir1,dir2]' or '--directories+=dir3' to append another directory. "
-            'Quoting is required when specifying multiple directories that are separated by commas and spaces.'
+            'Images within the directories are sorted using natural order respecting the file paths with OS-Generated '
+            'names. Quoting is required when specifying multiple directories that are separated by commas and spaces. '
         ),
     )
 

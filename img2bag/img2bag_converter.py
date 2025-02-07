@@ -28,11 +28,13 @@ from pathlib import PurePath
 from time import time
 from typing import TYPE_CHECKING
 
+import natsort
 import numpy as np
 from builtin_interfaces.msg import Time
+from natsort import natsorted
 from PIL import Image as PILImage
 from rclpy.serialization import serialize_message
-from rich import print  # noqa: A004
+from rich import print as rprint
 from rich.progress import track
 from rosbag2_py import ConverterOptions
 from rosbag2_py import SequentialWriter
@@ -45,7 +47,6 @@ from std_msgs.msg import Header
 from .enums import StorageID
 from .utils import get_flatten_calibration_matrices
 from .utils import get_frame_id_from_topic
-from .utils import natural_sort_key
 from .utils import pure_pil_alpha_to_color
 from .utils import resize_image
 from .utils import split_unix_timestamp
@@ -267,7 +268,11 @@ class Img2BagConverter:
             for f in (Path(image_dir).rglob('**/*') if self._recursive_dirs else Path(image_dir).iterdir())
             if f.is_file()
         ]
-        image_files.sort(key=natural_sort_key)
+        image_files = natsorted(
+            image_files,
+            key=lambda s: (str(s.absolute()).replace(' ', '_'), s.name),
+            alg=natsort.ns.PATH | natsort.ns.IGNORECASE | natsort.ns.REAL,
+        )
 
         for file_path in track(
             image_files,
@@ -275,7 +280,6 @@ class Img2BagConverter:
             total=len(image_files),
         ):
             header = Header(stamp=Time(sec=sec, nanosec=nsec), frame_id=frame_id)
-            print(file_path)
             try:
                 img_msg, camera_info_msg = self._create_image_camera_info_messages(file_path, header)
             except (OSError, SyntaxError):
@@ -305,7 +309,7 @@ class Img2BagConverter:
         for image_dir, topic in self._image_topic_pairs:
             self._convert_image_to_topic(Path(image_dir), topic)
 
-        print(f"\n[bold green]Saved ROS bag file to '{output}'.[/bold green]")
+        rprint(f"\n[bold green]Saved ROS bag file to '{output}'.[/bold green]")
 
         del self._rosbag_writer
         self._rosbag_writer = None

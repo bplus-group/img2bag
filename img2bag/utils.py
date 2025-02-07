@@ -23,8 +23,6 @@
 # numpydoc ignore=GL08
 from __future__ import annotations
 
-import re
-from pathlib import Path
 from pathlib import PurePath
 
 import numpy as np
@@ -72,25 +70,6 @@ def split_unix_timestamp(timestamp: float) -> tuple[int, int]:
     nsec: int = int((timestamp * 1e9) % 1e9)
 
     return (sec, nsec)
-
-
-def natural_sort_key(file: Path | str) -> list[int | str]:
-    """
-    Generate a sort key for file names to neable natural ordering.
-
-    Parameters
-    ----------
-    file : Path | str
-        The file path or file name to generate the sorting key for.
-
-    Returns
-    -------
-    list[int | str]
-        A list of integers and strings representing the decomposed components
-        of the file name.
-    """
-    parts = re.split(r'(\d+)', str(file))
-    return [int(part) if part.isdigit() else part for part in parts]
 
 
 def pure_pil_alpha_to_color(image: PILImage.Image, color: tuple[int, int, int] = (0, 0, 0)) -> PILImage.Image:
