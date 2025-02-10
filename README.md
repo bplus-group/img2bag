@@ -60,11 +60,29 @@ ros-${ROS_DISTRO}-ros2bag
 ros-${ROS_DISTRO}-rosbag2-storage-mcap
 ```
 
-To install from source using pip:
+To install *img2bag* using pip:
+
+- locate and download the latest `.whl` file from the [GitHub releases](https://github.com/bplus-group/img2bag/releases)
+- run:
+
+```bash
+python3 -m pip install img2bag-<version>-py3-none-any.whl
+```
+
+- or without downloading:
+```bash
+python3 -m pip install https://github.com/bplus-group/img2bag/releases/download/<version>/img2bag-<version>-py3-none-any.whl
+```
+
+>[!NOTE]
+>Replace `<version>` with the latest version number from the [GitHub releases](https://github.com/bplus-group/img2bag/releases)
+
+From source:
 
 ```bash
 python3 -m pip install git+https://github.com/bplus-group/img2bag
 ```
+
 <p align="right"><a href="#top">Back to top</a></p>
 
 ### Using the command-line interface
