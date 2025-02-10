@@ -47,7 +47,6 @@ from std_msgs.msg import Header
 from .enums import StorageID
 from .utils import get_flatten_calibration_matrices
 from .utils import get_frame_id_from_topic
-from .utils import pure_pil_alpha_to_color
 from .utils import resize_image
 from .utils import split_unix_timestamp
 
@@ -220,14 +219,22 @@ class Img2BagConverter:
             Image message and corresponding camera info message.
         """
         with PILImage.open(file_path) as img_org:
-            img = pure_pil_alpha_to_color(img_org) if img_org.mode == 'RGBA' else img_org
-            img = resize_image(img, self._imgsz) if self._imgsz else img
+            img = resize_image(img_org, self._imgsz) if self._imgsz else img_org
+
+            image_encoding_map = {
+                'RGB': 'rgb8',
+                'RGBA': 'rgba8',
+                'L': 'mono8',
+            }
+            if img.mode not in image_encoding_map:
+                msg = f"Unsupported image mode '{img.mode}' for file '{file_path}'. Skipping..."
+                raise UserWarning(msg)
 
             img_msg = Image(
                 header=header,
                 height=img.height,
                 width=img.width,
-                encoding='rgb8',
+                encoding=image_encoding_map.get(img.mode, 'rgb8'),
                 is_bigendian=False,
                 step=img.width * len(img.getbands()),
                 data=np.frombuffer(img.tobytes(), dtype=np.uint8),
@@ -282,7 +289,8 @@ class Img2BagConverter:
             header = Header(stamp=Time(sec=sec, nanosec=nsec), frame_id=frame_id)
             try:
                 img_msg, camera_info_msg = self._create_image_camera_info_messages(file_path, header)
-            except (OSError, SyntaxError):
+            except (OSError, SyntaxError, UserWarning) as e:
+                rprint(f"[yellow]WARNING: '{e}'[/yellow]")
                 continue
 
             timestamp = int(sec * 1e9 + nsec)
