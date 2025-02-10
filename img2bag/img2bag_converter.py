@@ -69,12 +69,29 @@ class Img2BagConverter:
         self._image_topic_pairs = image_topic_pairs
         self._rosbag_writer: SequentialWriter
 
+        self._verbose: bool = False
         self._camera_info_topic: str = 'camera_info'
         self._imgsz: tuple[int, int] | None = None
         self._start_timestamp: float = time()
         self._rate: float = 1.0
         self._recursive_dirs: bool = False
         self._storage_id: StorageID = StorageID.MCAP
+
+    @property
+    def verbose(self) -> bool:
+        """
+        Get the verbosity flag for enabling detailed output.
+
+        Returns
+        -------
+        bool
+            `True` if verbose output is enabled, `False` otherwise.
+        """
+        return self._verbose
+
+    @verbose.setter
+    def verbose(self, value: bool) -> None:  # numpydoc ignore=GL08
+        self._verbose = value
 
     @property
     def image_size(self) -> tuple[int, int] | None:
@@ -283,9 +300,12 @@ class Img2BagConverter:
 
         for file_path in track(
             image_files,
-            description=f"Processing topic '{image_topic_name}'",
+            description=f"Working on topic '{image_topic_name}'",
             total=len(image_files),
         ):
+            if self._verbose:
+                rprint(f"Parsing: '{file_path}'")
+
             header = Header(stamp=Time(sec=sec, nanosec=nsec), frame_id=frame_id)
             try:
                 img_msg, camera_info_msg = self._create_image_camera_info_messages(file_path, header)

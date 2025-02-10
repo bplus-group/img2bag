@@ -52,6 +52,7 @@ class _CustomHelpFormatter(DefaultHelpFormatter):
 
 def _parse_arguments() -> Namespace:
     parser = ArgumentParser(formatter_class=_CustomHelpFormatter, version=__version__)
+    parser.add_argument('--verbose', action='store_true', help='Enable verbose output.')
 
     parser.add_argument(
         '--config',
@@ -175,6 +176,7 @@ def main() -> int:
 
         converter = Img2BagConverter(_parse_image_topic_pairs(args.directories, args.topics))
 
+        converter.verbose = args.verbose
         converter.image_size = _parse_image_size(args.image_size)
         converter.start_timestamp = args.timestamp
         converter.rate = args.rate

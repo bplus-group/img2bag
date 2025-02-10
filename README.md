@@ -99,7 +99,7 @@ img2bag --directories=[./images] --topics=[/image] --output mybag
 > ```
 
 ```plaintext
-Processing topic '/image' ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:17
+Working on topic '/image' ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:17
 
 Saved ROS bag file to '/mybag'.
 ```
@@ -121,8 +121,8 @@ img2bag --directories=[./images_1,./images_2] \
 
 ```plaintext
 [INFO] [1738647810.973381809] [rosbag2_storage]: Opened database '/mybag/mybag_0.db3' for READ_WRITE.
-Processing topic '/sensor/camera_1/image' ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:09
-Processing topic '/sensor/camera_2/image' ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:10
+Working on topic '/sensor/camera_1/image' ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:09
+Working on topic '/sensor/camera_2/image' ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:10
 
 Saved ROS bag file to '/mybag'.
 ```
@@ -186,6 +186,7 @@ For more advanced options while converting:
 ```plaintext
   -h, --help            Show this help message and exit.
   --version             Print version and exit.
+  --verbose             Enable verbose output. (default: False)
   --config CONFIG       Path to a configuration file in JSON or YAML format. This file can contain predefined arguments.
   --print_config[=flags]
                         Print the configuration after applying all other arguments and exit. The optional flags
@@ -211,7 +212,7 @@ For more advanced options while converting:
                         ImageSizeType, default: null)
   -ts TIMESTAMP, --timestamp TIMESTAMP
                         Starting timestamp (Unix epoch time in seconds) for the bag file. Defaults to the current system
-                        time. (type: PositiveInt, default: 1738914937)
+                        time. (type: PositiveInt, default: 1739166685)
   -r RATE, --rate RATE  Playback rate of the image topics in frames per second (Hz). (type: PositiveFloat, default: 1.0)
   -rd, --recursive-dirs
                         Recursively search directories for images. (default: False)
