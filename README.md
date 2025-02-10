@@ -141,6 +141,7 @@ img2bag --print_config > config.yaml
 Example configuration file (`config.yaml`):
 
 ```yaml
+verbose: false                     # Enable verbose output (optional)
 directories: null                  # List of image directories (required)
 topics: null                       # List of ROS topics to publish images under (required)
 camera_info_topic: camera_info     # Topic for camera info messages (optional)
