@@ -39,8 +39,9 @@ from jsonargparse.typing import PositiveInt
 from jsonargparse.typing import path_type
 from jsonargparse.typing import restricted_string_type
 
-from ._version import __version__
-from .enums import StorageID
+from img2bag._version import __version__
+from img2bag.enums import StorageID
+from img2bag.img2bag_converter import Img2BagConverter
 
 Path_dr = path_type('dr')
 
@@ -171,8 +172,6 @@ def _parse_image_size(image_size: str | None) -> tuple[int, int] | None:
 def main() -> int:
     try:
         args = _parse_arguments()
-
-        from .img2bag_converter import Img2BagConverter
 
         converter = Img2BagConverter(_parse_image_topic_pairs(args.directories, args.topics))
 
