@@ -83,6 +83,11 @@ From source:
 python3 -m pip install git+https://github.com/bplus-group/img2bag
 ```
 
+As a 0-dependency (except for ROS2 and appropriate ROS2 packages) [zipapp](https://docs.python.org/3/library/zipapp.html):
+
+- locate and download the `.pyz` file from the [GitHub releases](https://github.com/bplus-group/img2bag/releases)
+- run `python3 img2bag-#.#.#.pyz` ... in place of `img2bag` ...
+
 <p align="right"><a href="#top">Back to top</a></p>
 
 ### Using the command-line interface
