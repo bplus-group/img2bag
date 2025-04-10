@@ -152,11 +152,11 @@ def get_flatten_calibration_matrices(
     #     [fx   0  cx]
     # K = [ 0  fy  cy]
     #     [ 0   0   1]
-    aspect_ratio = imgsz[1] / imgsz[0]
+    focal_length = max(imgsz)
 
     K: npt.NDArray[np.float64] = np.identity(3, dtype=np.float64)  # intrinsic  # noqa: N806
-    K[0, [0, 2]] = [imgsz[0], imgsz[0] / 2]
-    K[1, [1, 2]] = [imgsz[1] / aspect_ratio, imgsz[1] / 2]
+    K[0, [0, 2]] = [focal_length, imgsz[0] / 2]
+    K[1, [1, 2]] = [focal_length, imgsz[1] / 2]
 
     R: npt.NDArray[np.float64] = np.identity(3, dtype=np.float64)  # rotation  # noqa: N806
 
